@@ -1,0 +1,493 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --pg: #0a0b12;
+    --surface: #13161e;
+    --card: #1a1d28;
+    --card2: #1f2232;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --accent: #a3e635;
+    --accent2: #22d3a8;
+    --accent3: #fb923c;
+    --accent4: #a78bfa;
+    --text1: #f0f2f8;
+    --text2: #9aa3b8;
+    --text3: #5c6478;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+  body { background: var(--pg); color: var(--text1); font-family: 'Inter', sans-serif; }
+
+  .root { width: 100%; min-height: 520px; background: var(--pg); position: relative; overflow: hidden; }
+
+  /* ── Revolving purple gradient orb ── */
+  .orb-wrap { position: fixed; top: 50%; left: 50%; width: 0; height: 0; pointer-events: none; z-index: 0; }
+  .orb { position: absolute; width: 520px; height: 520px; border-radius: 50%;
+    background: conic-gradient(
+      from 0deg,
+      rgba(139,92,246,0.0) 0%,
+      rgba(167,139,250,0.18) 20%,
+      rgba(196,181,253,0.28) 40%,
+      rgba(139,92,246,0.22) 60%,
+      rgba(91,33,182,0.12) 80%,
+      rgba(139,92,246,0.0) 100%
+    );
+    transform: translate(-50%,-50%) rotate(0deg);
+    animation: revolve 7s linear infinite;
+    filter: blur(48px);
+  }
+  .orb2 { position: absolute; width: 320px; height: 320px; border-radius: 50%;
+    background: conic-gradient(
+      from 180deg,
+      rgba(139,92,246,0.0) 0%,
+      rgba(88,28,235,0.22) 30%,
+      rgba(167,139,250,0.3) 55%,
+      rgba(139,92,246,0.1) 80%,
+      rgba(139,92,246,0.0) 100%
+    );
+    transform: translate(-50%,-50%) rotate(0deg);
+    animation: revolve 4.5s linear infinite reverse;
+    filter: blur(32px);
+  }
+  @keyframes revolve {
+    from { transform: translate(-50%,-50%) rotate(0deg); }
+    to   { transform: translate(-50%,-50%) rotate(360deg); }
+  }
+
+  /* ── Pages ── */
+  .page { display: none; padding: 28px 24px 80px; animation: fadeIn 0.35s ease; position: relative; z-index: 1; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+  .topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+  .logo { display:flex; align-items:center; gap:10px; }
+  .logo-icon { width:36px; height:36px; background:var(--accent); border-radius:10px; display:flex; align-items:center; justify-content:center; }
+  .logo-icon svg { width:20px; height:20px; }
+  .logo-text { font-size:15px; font-weight:600; color:var(--text1); letter-spacing:0.3px; }
+  .logo-sub { font-size:11px; color:var(--text2); }
+  .page-badge { background:rgba(26,29,40,0.85); border:0.5px solid var(--border2); border-radius:20px; padding:5px 14px; font-size:12px; color:var(--text2); backdrop-filter:blur(8px); }
+
+  .hero-tag { display:inline-block; background:rgba(163,230,53,0.12); border:0.5px solid rgba(163,230,53,0.3); color:var(--accent); font-size:11px; font-weight:500; border-radius:20px; padding:4px 12px; margin-bottom:14px; letter-spacing:0.8px; text-transform:uppercase; }
+  .hero-title { font-size:28px; font-weight:700; line-height:1.2; color:var(--text1); margin-bottom:8px; }
+  .hero-title span { color:var(--accent); }
+  .hero-sub { font-size:14px; color:var(--text2); line-height:1.6; max-width:480px; margin-bottom:24px; }
+
+  .row { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
+  .card { background:rgba(26,29,40,0.75); border:0.5px solid var(--border); border-radius:var(--radius); padding:16px; backdrop-filter:blur(6px); }
+  .card-sm { padding:12px 14px; }
+
+  .metric-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
+  .metric { background:rgba(26,29,40,0.75); border:0.5px solid var(--border); border-radius:var(--radius-sm); padding:14px 12px; text-align:center; backdrop-filter:blur(6px); }
+  .metric-val { font-size:20px; font-weight:700; color:var(--accent); margin-bottom:2px; }
+  .metric-lbl { font-size:11px; color:var(--text2); }
+
+  .section-label { font-size:11px; font-weight:600; color:var(--text3); letter-spacing:1px; text-transform:uppercase; margin-bottom:10px; }
+  .divider { height:0.5px; background:var(--border); margin:14px 0; }
+  .tag-row { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+  .tag { background:rgba(31,34,50,0.85); border:0.5px solid var(--border); border-radius:20px; padding:4px 10px; font-size:11px; color:var(--text2); }
+  .tag.green  { background:rgba(163,230,53,0.1);  border-color:rgba(163,230,53,0.25);  color:var(--accent); }
+  .tag.teal   { background:rgba(34,211,168,0.1);  border-color:rgba(34,211,168,0.25);  color:var(--accent2); }
+  .tag.orange { background:rgba(251,146,60,0.1);  border-color:rgba(251,146,60,0.25);  color:var(--accent3); }
+  .tag.purple { background:rgba(167,139,250,0.1); border-color:rgba(167,139,250,0.25); color:var(--accent4); }
+
+  .h3 { font-size:15px; font-weight:600; color:var(--text1); margin-bottom:8px; }
+  .p  { font-size:13px; color:var(--text2); line-height:1.65; }
+
+  /* ── Wavy icon ── */
+  .wi { display:inline-block; font-size:22px; cursor:default; transition:transform 0.15s; will-change:transform; }
+
+  /* ── Why / Lean ── */
+  .why-block { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:16px; }
+  .why-card { background:rgba(26,29,40,0.75); border:0.5px solid var(--border); border-radius:var(--radius); padding:14px; position:relative; overflow:hidden; backdrop-filter:blur(6px); }
+  .why-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+  .why-why::before  { background:var(--accent); }
+  .why-how::before  { background:var(--accent2); }
+  .why-what::before { background:var(--accent4); }
+  .why-label { font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:8px; }
+  .why-why  .why-label { color:var(--accent); }
+  .why-how  .why-label { color:var(--accent2); }
+  .why-what .why-label { color:var(--accent4); }
+  .why-text { font-size:12px; color:var(--text2); line-height:1.6; }
+
+  .lean-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+  .lean-num  { font-size:32px; font-weight:800; color:rgba(163,230,53,0.15); line-height:1; margin-bottom:6px; }
+
+  /* ── BMC ── */
+  .bmc-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
+  .bmc-badge { font-size:10px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--accent2); margin-bottom:6px; }
+
+  /* ── Persona / Finance ── */
+  .persona-card { background:rgba(26,29,40,0.75); border:0.5px solid var(--border); border-radius:var(--radius); padding:18px; display:flex; align-items:flex-start; gap:16px; margin-bottom:12px; backdrop-filter:blur(6px); }
+  .avatar { width:52px; height:52px; border-radius:50%; background:linear-gradient(135deg,#a3e635 0%,#22d3a8 100%); display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:700; color:#0d0f14; flex-shrink:0; }
+  .fin-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:0.5px solid var(--border); }
+  .fin-row:last-child { border-bottom:none; }
+  .fin-key { font-size:13px; color:var(--text2); }
+  .fin-val { font-size:14px; font-weight:600; color:var(--accent); }
+
+  /* ── SWOT ── */
+  .swot-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .swot-card { border-radius:var(--radius); padding:14px; backdrop-filter:blur(6px); }
+  .swot-s { background:rgba(34,211,168,0.08);  border:0.5px solid rgba(34,211,168,0.2); }
+  .swot-w { background:rgba(251,146,60,0.08);  border:0.5px solid rgba(251,146,60,0.2); }
+  .swot-o { background:rgba(163,230,53,0.08);  border:0.5px solid rgba(163,230,53,0.2); }
+  .swot-t { background:rgba(248,113,113,0.08); border:0.5px solid rgba(248,113,113,0.2); }
+  .swot-title { font-size:11px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; margin-bottom:10px; }
+  .swot-s .swot-title { color:var(--accent2); }
+  .swot-w .swot-title { color:var(--accent3); }
+  .swot-o .swot-title { color:var(--accent); }
+  .swot-t .swot-title { color:#f87171; }
+  .swot-item { font-size:12px; color:var(--text2); padding:4px 0; display:flex; gap:7px; align-items:flex-start; }
+  .swot-item::before { content:''; width:5px; height:5px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+  .swot-s .swot-item::before { background:var(--accent2); }
+  .swot-w .swot-item::before { background:var(--accent3); }
+  .swot-o .swot-item::before { background:var(--accent); }
+  .swot-t .swot-item::before { background:#f87171; }
+
+  .strat-block { background:rgba(26,29,40,0.75); border:0.5px solid var(--border); border-radius:var(--radius); padding:14px; margin-bottom:10px; backdrop-filter:blur(6px); }
+  .strat-head { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+  .strat-icon { width:30px; height:30px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; }
+  .strat-icon.online  { background:rgba(167,139,250,0.15); }
+  .strat-icon.offline { background:rgba(34,211,168,0.15); }
+
+  /* ── Growth cards ── */
+  .growth-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .growth-item { background:rgba(26,29,40,0.75); border:0.5px solid var(--border); border-radius:var(--radius); padding:14px; backdrop-filter:blur(6px); }
+  .growth-title { font-size:13px; font-weight:600; color:var(--text1); margin-bottom:4px; }
+  .growth-text  { font-size:12px; color:var(--text2); line-height:1.5; }
+
+  /* ── Nav ── */
+  .nav { position:fixed; bottom:0; left:0; right:0; display:flex; align-items:center; justify-content:space-between; padding:12px 24px; background:rgba(10,11,18,0.92); backdrop-filter:blur(14px); border-top:0.5px solid var(--border); z-index:100; }
+  .nav-dots { display:flex; gap:6px; align-items:center; }
+  .ndot { width:6px; height:6px; border-radius:50%; background:var(--text3); transition:all 0.25s; cursor:pointer; }
+  .ndot.on { width:20px; border-radius:3px; background:var(--accent); }
+  .nav-btn { display:flex; align-items:center; gap:6px; background:rgba(31,34,50,0.9); border:0.5px solid var(--border2); border-radius:20px; padding:8px 16px; font-size:13px; font-weight:500; color:var(--text1); cursor:pointer; transition:all 0.2s; }
+  .nav-btn:hover { background:var(--accent); color:#0d0f14; border-color:var(--accent); }
+  .nav-btn.primary { background:var(--accent); color:#0d0f14; border-color:var(--accent); }
+  .nav-btn.primary:hover { opacity:0.85; }
+  .nav-btn:disabled { opacity:0.3; cursor:default; background:rgba(31,34,50,0.9); color:var(--text2); border-color:var(--border); }
+  .nav-btn svg { width:14px; height:14px; }
+</style>
+
+<div class="root">
+  <!-- Revolving orb -->
+  <div class="orb-wrap"><div class="orb"></div><div class="orb2"></div></div>
+
+  <!-- PAGE 1 -->
+  <div class="page active" id="p1">
+    <div class="topbar">
+      <div class="logo">
+        <div class="logo-icon"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2C7 2 4 5 4 9c0 2.5 1.5 5 4 6.5V17h4v-1.5C15 14 16.5 11.5 16.5 9 16.5 5 13.5 2 10 2z" fill="#0d0f14"/><circle cx="10" cy="9" r="2.5" fill="#0d0f14"/></svg></div>
+        <div><div class="logo-text">FuelUp Fresh</div><div class="logo-sub">Juice Bar</div></div>
+      </div>
+      <div class="page-badge">01 / 06</div>
+    </div>
+    <div class="hero-tag">Business Case Study</div>
+    <div class="hero-title">Healthy Energy for<br><span>Busy Students</span></div>
+    <div class="hero-sub">A student-focused beverage startup near engineering colleges offering affordable, fresh, and quick refreshments built on lean principles.</div>
+    <div class="metric-grid">
+      <div class="metric"><div class="metric-val">2000+</div><div class="metric-lbl">Target Students</div></div>
+      <div class="metric"><div class="metric-val">₹55</div><div class="metric-lbl">Avg Order Value</div></div>
+      <div class="metric"><div class="metric-val">2-3 min</div><div class="metric-lbl">Service Time</div></div>
+    </div>
+    <div class="section-label">Core Products</div>
+    <div class="tag-row">
+      <span class="tag green"><span class="wi" data-wave>🍊</span> Fresh Fruit Juices</span>
+      <span class="tag teal"><span class="wi" data-wave>🥤</span> Healthy Smoothies</span>
+      <span class="tag orange"><span class="wi" data-wave>⚡</span> Exam Energy Drinks</span>
+      <span class="tag purple"><span class="wi" data-wave>📅</span> Subscription Plans</span>
+    </div>
+    <div class="divider"></div>
+    <div class="section-label">Value Triggers</div>
+    <div class="row">
+      <div class="card card-sm" style="flex:1;min-width:120px;">
+        <div style="font-size:10px;color:var(--accent2);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;"><span class="wi" data-wave>⚡</span> Speed</div>
+        <div style="font-size:13px;color:var(--text1);">Ready in 2–3 minutes flat</div>
+      </div>
+      <div class="card card-sm" style="flex:1;min-width:120px;">
+        <div style="font-size:10px;color:var(--accent);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;"><span class="wi" data-wave>💰</span> Price</div>
+        <div style="font-size:13px;color:var(--text1);">Student-optimized pricing</div>
+      </div>
+      <div class="card card-sm" style="flex:1;min-width:120px;">
+        <div style="font-size:10px;color:var(--accent4);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;"><span class="wi" data-wave>🎁</span> Loyalty</div>
+        <div style="font-size:13px;color:var(--text1);">Monthly subscription plans</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 2 -->
+  <div class="page" id="p2">
+    <div class="topbar">
+      <div class="logo">
+        <div class="logo-icon"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2C7 2 4 5 4 9c0 2.5 1.5 5 4 6.5V17h4v-1.5C15 14 16.5 11.5 16.5 9 16.5 5 13.5 2 10 2z" fill="#0d0f14"/><circle cx="10" cy="9" r="2.5" fill="#0d0f14"/></svg></div>
+        <div><div class="logo-text">FuelUp Fresh</div><div class="logo-sub">Juice Bar</div></div>
+      </div>
+      <div class="page-badge">02 / 06</div>
+    </div>
+    <div class="hero-tag">Strategy</div>
+    <div class="hero-title" style="font-size:22px;margin-bottom:16px;">Start with Why &amp;<br><span>Lean Startup</span></div>
+    <div class="section-label">The Why Framework</div>
+    <div class="why-block">
+      <div class="why-card why-why">
+        <div class="why-label"><span class="wi" data-wave>💡</span> Why</div>
+        <div class="why-text">Help students stay energetic, healthy, and productive through affordable fresh nutrition.</div>
+      </div>
+      <div class="why-card why-how">
+        <div class="why-label"><span class="wi" data-wave>⚙️</span> How</div>
+        <div class="why-text">Hygienic preparation, quick service, affordable pricing, and customizable beverages.</div>
+      </div>
+      <div class="why-card why-what">
+        <div class="why-label"><span class="wi" data-wave>🎯</span> What</div>
+        <div class="why-text">Fresh juices, smoothies, milkshakes, combo offers, and daily subscription plans.</div>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="section-label">Lean Startup Loop</div>
+    <div class="lean-grid">
+      <div class="card">
+        <div class="lean-num">1</div>
+        <div class="h3" style="color:var(--accent);"><span class="wi" data-wave>🔨</span> Build</div>
+        <div class="p">Small juice counter with 5–6 seasonal products. Agile menu.</div>
+      </div>
+      <div class="card">
+        <div class="lean-num">2</div>
+        <div class="h3" style="color:var(--accent2);"><span class="wi" data-wave>📊</span> Measure</div>
+        <div class="p">QR surveys, Instagram polls, and real-time sales tracking.</div>
+      </div>
+      <div class="card">
+        <div class="lean-num">3</div>
+        <div class="h3" style="color:var(--accent4);"><span class="wi" data-wave>🧠</span> Learn</div>
+        <div class="p">Improve recipes per campus demand. Launch new combinations fast.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 3 -->
+  <div class="page" id="p3">
+    <div class="topbar">
+      <div class="logo">
+        <div class="logo-icon"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2C7 2 4 5 4 9c0 2.5 1.5 5 4 6.5V17h4v-1.5C15 14 16.5 11.5 16.5 9 16.5 5 13.5 2 10 2z" fill="#0d0f14"/><circle cx="10" cy="9" r="2.5" fill="#0d0f14"/></svg></div>
+        <div><div class="logo-text">FuelUp Fresh</div><div class="logo-sub">Juice Bar</div></div>
+      </div>
+      <div class="page-badge">03 / 06</div>
+    </div>
+    <div class="hero-tag">Business Model</div>
+    <div class="hero-title" style="font-size:22px;margin-bottom:16px;">Business Model <span>Canvas</span></div>
+    <div class="bmc-grid">
+      <div class="card card-sm">
+        <div class="bmc-badge"><span class="wi" data-wave>🤝</span> Key Partners</div>
+        <div class="p">Fruit & organic suppliers · Delivery apps · Campus event organizers · Gyms & hostels</div>
+      </div>
+      <div class="card card-sm">
+        <div class="bmc-badge"><span class="wi" data-wave>⚙️</span> Key Activities</div>
+        <div class="p">Juice preparation · JIT inventory · Hygiene maintenance · Micro-influencer marketing</div>
+      </div>
+      <div class="card card-sm" style="background:rgba(163,230,53,0.06);border-color:rgba(163,230,53,0.2);">
+        <div class="bmc-badge" style="color:var(--accent);"><span class="wi" data-wave>💎</span> Value Proposition</div>
+        <div class="p">Affordable, fresh, high-energy drinks in 2–3 min to match busy engineering schedules.</div>
+      </div>
+      <div class="card card-sm">
+        <div class="bmc-badge"><span class="wi" data-wave>💬</span> Customer Relations</div>
+        <div class="p">Reward cards · Peer referrals · Student deals · Instagram content</div>
+      </div>
+      <div class="card card-sm">
+        <div class="bmc-badge"><span class="wi" data-wave>📡</span> Channels</div>
+        <div class="p">Campus stall · WhatsApp broadcasts · Instagram reels · Delivery apps</div>
+      </div>
+      <div class="card card-sm">
+        <div class="bmc-badge"><span class="wi" data-wave>👥</span> Customer Segments</div>
+        <div class="p">Engineering students · Faculty · Gym-goers · Off-campus hostellers</div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="card card-sm" style="flex:1;">
+        <div class="bmc-badge" style="color:var(--accent3);"><span class="wi" data-wave>💸</span> Cost Structure</div>
+        <div class="p">Fruit purchasing · Staff salaries · Rent · Electricity · Eco-friendly packaging</div>
+      </div>
+      <div class="card card-sm" style="flex:1;">
+        <div class="bmc-badge" style="color:var(--accent2);"><span class="wi" data-wave>💵</span> Revenue Streams</div>
+        <div class="p">Counter sales · Monthly subscriptions · Protein shakes · Campus catering</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 4 -->
+  <div class="page" id="p4">
+    <div class="topbar">
+      <div class="logo">
+        <div class="logo-icon"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2C7 2 4 5 4 9c0 2.5 1.5 5 4 6.5V17h4v-1.5C15 14 16.5 11.5 16.5 9 16.5 5 13.5 2 10 2z" fill="#0d0f14"/><circle cx="10" cy="9" r="2.5" fill="#0d0f14"/></svg></div>
+        <div><div class="logo-text">FuelUp Fresh</div><div class="logo-sub">Juice Bar</div></div>
+      </div>
+      <div class="page-badge">04 / 06</div>
+    </div>
+    <div class="hero-tag">Target & Finance</div>
+    <div class="hero-title" style="font-size:22px;margin-bottom:16px;">Persona &amp;<br><span>Financial Projection</span></div>
+    <div class="persona-card">
+      <div class="avatar">R</div>
+      <div>
+        <div style="font-size:16px;font-weight:700;color:var(--text1);margin-bottom:3px;"><span class="wi" data-wave>🎓</span> Rahul</div>
+        <div style="font-size:12px;color:var(--accent);margin-bottom:8px;">Age 20 · Engineering Student</div>
+        <div class="p">Hostel resident who needs immediate, cost-efficient, and healthy energy refills between back-to-back classes and demanding exam weeks.</div>
+        <div class="tag-row" style="margin-top:10px;">
+          <span class="tag green">Hostel Resident</span>
+          <span class="tag orange">Exam Stress</span>
+          <span class="tag teal">Budget Conscious</span>
+        </div>
+      </div>
+    </div>
+    <div class="section-label">Financial Projections</div>
+    <div class="card" style="padding:0 16px;">
+      <div class="fin-row"><span class="fin-key"><span class="wi" data-wave>👣</span> Daily Target Footfall</span><span class="fin-val">120+ customers</span></div>
+      <div class="fin-row"><span class="fin-key"><span class="wi" data-wave>🛒</span> Average Order Value</span><span class="fin-val">₹55</span></div>
+      <div class="fin-row"><span class="fin-key"><span class="wi" data-wave>📅</span> Est. Daily Revenue</span><span class="fin-val">₹6,600</span></div>
+      <div class="fin-row"><span class="fin-key"><span class="wi" data-wave>📈</span> Est. Monthly Revenue</span><span class="fin-val">₹1.8 – 2 Lakhs</span></div>
+      <div class="fin-row"><span class="fin-key"><span class="wi" data-wave>💹</span> Target Profit Margin</span><span class="fin-val">25% – 35%</span></div>
+    </div>
+    <div style="margin-top:12px;padding:14px;background:rgba(163,230,53,0.06);border:0.5px solid rgba(163,230,53,0.2);border-radius:var(--radius);">
+      <div style="font-size:11px;font-weight:600;letter-spacing:1px;color:var(--accent);text-transform:uppercase;margin-bottom:6px;">Monthly Profit Estimate</div>
+      <div style="font-size:24px;font-weight:700;color:var(--accent);">₹45K – ₹70K</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:2px;">at 25–35% margin on ₹2L revenue</div>
+    </div>
+  </div>
+
+  <!-- PAGE 5 -->
+  <div class="page" id="p5">
+    <div class="topbar">
+      <div class="logo">
+        <div class="logo-icon"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2C7 2 4 5 4 9c0 2.5 1.5 5 4 6.5V17h4v-1.5C15 14 16.5 11.5 16.5 9 16.5 5 13.5 2 10 2z" fill="#0d0f14"/><circle cx="10" cy="9" r="2.5" fill="#0d0f14"/></svg></div>
+        <div><div class="logo-text">FuelUp Fresh</div><div class="logo-sub">Juice Bar</div></div>
+      </div>
+      <div class="page-badge">05 / 06</div>
+    </div>
+    <div class="hero-tag">Analysis</div>
+    <div class="hero-title" style="font-size:22px;margin-bottom:16px;">SWOT &amp;<br><span>Marketing Strategy</span></div>
+    <div class="swot-grid" style="margin-bottom:14px;">
+      <div class="swot-card swot-s">
+        <div class="swot-title"><span class="wi" data-wave>💪</span> Strengths</div>
+        <div class="swot-item">Nutrient-dense product ecosystem</div>
+        <div class="swot-item">Affordable price for students</div>
+      </div>
+      <div class="swot-card swot-w">
+        <div class="swot-title"><span class="wi" data-wave>⚠️</span> Weaknesses</div>
+        <div class="swot-item">Highly perishable inventory</div>
+        <div class="swot-item">Complex daily stock predictions</div>
+      </div>
+      <div class="swot-card swot-o">
+        <div class="swot-title"><span class="wi" data-wave>🚀</span> Opportunities</div>
+        <div class="swot-item">Expansion to rival campuses</div>
+        <div class="swot-item">Gym & fitness partnerships</div>
+      </div>
+      <div class="swot-card swot-t">
+        <div class="swot-title"><span class="wi" data-wave>🛡️</span> Threats</div>
+        <div class="swot-item">Premium café expansion</div>
+        <div class="swot-item">Cheap bottled drink brands</div>
+      </div>
+    </div>
+    <div class="strat-block">
+      <div class="strat-head">
+        <div class="strat-icon online"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="#a78bfa" stroke-width="1.5"/><path d="M2 8h12M8 2c-2 2-2 8 0 12M8 2c2 2 2 8 0 12" stroke="#a78bfa" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+        <div style="font-size:13px;font-weight:600;color:var(--accent4);"><span class="wi" data-wave>📱</span> Online Framework</div>
+      </div>
+      <div class="p">Viral Instagram Reels · WhatsApp push notifications · Custom referral links · Google Reviews drive backed by student incentives</div>
+    </div>
+    <div class="strat-block" style="margin-bottom:0;">
+      <div class="strat-head">
+        <div class="strat-icon offline"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="4" width="12" height="9" rx="1.5" stroke="#22d3a8" stroke-width="1.5"/><path d="M5 4V3a3 3 0 0 1 6 0v1" stroke="#22d3a8" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div style="font-size:13px;font-weight:600;color:var(--accent2);"><span class="wi" data-wave>🎪</span> Offline Framework</div>
+      </div>
+      <div class="p">Free tasting stalls at tech fests · Buy 2 Get 1 Free group study offers · Exam bundle discounts · Digital loyalty stamp cards</div>
+    </div>
+  </div>
+
+  <!-- PAGE 6 -->
+  <div class="page" id="p6">
+    <div class="topbar">
+      <div class="logo">
+        <div class="logo-icon"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2C7 2 4 5 4 9c0 2.5 1.5 5 4 6.5V17h4v-1.5C15 14 16.5 11.5 16.5 9 16.5 5 13.5 2 10 2z" fill="#0d0f14"/><circle cx="10" cy="9" r="2.5" fill="#0d0f14"/></svg></div>
+        <div><div class="logo-text">FuelUp Fresh</div><div class="logo-sub">Juice Bar</div></div>
+      </div>
+      <div class="page-badge">06 / 06</div>
+    </div>
+    <div class="hero-tag">Future Vision</div>
+    <div class="hero-title" style="font-size:22px;margin-bottom:16px;">Growth <span>Roadmap</span></div>
+    <div class="growth-grid">
+      <div class="growth-item"><div class="wi" data-wave style="font-size:26px;display:block;margin-bottom:8px;">🏪</div><div class="growth-title">Scale Outlets</div><div class="growth-text">Satellite units near neighboring college hubs for wider campus reach.</div></div>
+      <div class="growth-item"><div class="wi" data-wave style="font-size:26px;display:block;margin-bottom:8px;">🥤</div><div class="growth-title">FMCG Route</div><div class="growth-text">Launch cold-pressed bottled juice for retail and e-commerce channels.</div></div>
+      <div class="growth-item"><div class="wi" data-wave style="font-size:26px;display:block;margin-bottom:8px;">🤝</div><div class="growth-title">Alliances</div><div class="growth-text">Exclusive vendor tie-ups with premium gyms and student hostels nearby.</div></div>
+      <div class="growth-item"><div class="wi" data-wave style="font-size:26px;display:block;margin-bottom:8px;">📱</div><div class="growth-title">Micro-App</div><div class="growth-text">Lightning-fast advance pre-order app for zero wait time experience.</div></div>
+      <div class="growth-item"><div class="wi" data-wave style="font-size:26px;display:block;margin-bottom:8px;">🌿</div><div class="growth-title">Eco Pivot</div><div class="growth-text">Full transition to zero-waste biodegradable packaging structures.</div></div>
+      <div class="growth-item"><div class="wi" data-wave style="font-size:26px;display:block;margin-bottom:8px;">🥗</div><div class="growth-title">Menu Extension</div><div class="growth-text">Curated grab-and-go morning nutritional meal combos for students.</div></div>
+    </div>
+    <div style="margin-top:14px;padding:16px;background:rgba(26,29,40,0.75);border:0.5px solid var(--border);border-radius:var(--radius);text-align:center;backdrop-filter:blur(6px);">
+      <div style="font-size:13px;color:var(--text2);margin-bottom:6px;">Inspired by</div>
+      <div style="display:flex;justify-content:center;gap:16px;">
+        <span class="tag purple"><span class="wi" data-wave>📖</span> Start With Why</span>
+        <span class="tag teal"><span class="wi" data-wave>🔄</span> The Lean Startup</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <div class="nav">
+    <button class="nav-btn" id="prevBtn" onclick="changePage(-1)" disabled>
+      <svg viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back
+    </button>
+    <div class="nav-dots" id="navDots"></div>
+    <button class="nav-btn primary" id="nextBtn" onclick="changePage(1)">
+      Next
+      <svg viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+const TOTAL = 6;
+let cur = 1;
+const dotsEl = document.getElementById('navDots');
+for(let i=1;i<=TOTAL;i++){
+  const d=document.createElement('div');
+  d.className='ndot'+(i===1?' on':'');
+  d.onclick=()=>goTo(i);
+  dotsEl.appendChild(d);
+}
+function goTo(n){
+  document.getElementById('p'+cur).classList.remove('active');
+  cur=n;
+  document.getElementById('p'+cur).classList.add('active');
+  document.querySelectorAll('.ndot').forEach((d,i)=>d.classList.toggle('on',i===cur-1));
+  document.getElementById('prevBtn').disabled=cur===1;
+  const nb=document.getElementById('nextBtn');
+  if(cur===TOTAL){
+    nb.innerHTML='Done <svg viewBox="0 0 14 14" fill="none" style="width:14px;height:14px;"><path d="M2 7l4 4 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    nb.onclick=()=>goTo(1);
+  } else {
+    nb.innerHTML='Next <svg viewBox="0 0 14 14" fill="none" style="width:14px;height:14px;"><path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    nb.onclick=()=>changePage(1);
+  }
+}
+function changePage(dir){goTo(cur+dir);}
+
+/* ── Wavy icon effect ── */
+document.addEventListener('mouseover', function(e){
+  const el = e.target.closest('[data-wave]');
+  if(!el || el._waving) return;
+  el._waving = true;
+  const phases = [
+    'translateY(-5px) rotate(-12deg) scale(1.25)',
+    'translateY(3px)  rotate(10deg)  scale(1.1)',
+    'translateY(-4px) rotate(-8deg)  scale(1.2)',
+    'translateY(2px)  rotate(6deg)   scale(1.05)',
+    'translateY(-2px) rotate(-3deg)  scale(1.1)',
+    'translateY(0px)  rotate(0deg)   scale(1.0)'
+  ];
+  let i=0;
+  const tick=()=>{
+    if(i>=phases.length){ el.style.transform=''; el._waving=false; return; }
+    el.style.transform=phases[i++];
+    setTimeout(tick, 65);
+  };
+  tick();
+});
+</script>
